@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>YouTubeリンク管理</title>
+  <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.7/index.global.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.7/index.global.min.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+</head>
+<body>
+  <h1>YouTubeリンク管理</h1>
+  <button id="loginBtn">Googleでログイン</button>
+  <div id="userInfo"></div>
+
+  <form id="addForm">
+    <input type="date" id="videoDate" required>
+    <input type="text" id="videoTitle" placeholder="動画タイトル" required>
+    <input type="url" id="videoUrl" placeholder="YouTubeリンク" required>
+    <button type="submit">追加</button>
+  </form>
+
+  <div id="calendar"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
