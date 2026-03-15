@@ -17,30 +17,23 @@ const db = getFirestore(app);
 const videosRef = collection(db, "videos");
 
 let selectedDate = null;
+let videos = {};
 const correctPassword = "54315";
 
 // ===== ログイン確認 =====
 function checkPassword() {
   const password = document.getElementById("passwordInput").value.trim();
   if (password === correctPassword) {
-    localStorage.setItem('loggedIn', 'true'); // ログイン状態をローカルストレージに保存
+    localStorage.setItem('loggedIn', 'true');  // ログイン状態保存
     document.getElementById("loginScreen").style.display = "none";
     document.getElementById("siteContent").style.display = "block";
-    loadVideos(); // ログイン後に動画読み込み
+    loadVideos();  // 動画ロード
   } else {
     alert("パスワードが間違っています。");
   }
 }
 
-// ===== 動画管理 =====
-// 日付選択時
-document.getElementById("date").addEventListener("change", (e) => {
-  selectedDate = e.target.value;
-  renderVideos();
-  highlightCalendar();
-});
-
-// 動画追加
+// ===== 動画追加 =====
 async function addVideo() {
   const date = document.getElementById("date").value;
   const url = document.getElementById("url").value.trim();
@@ -52,17 +45,28 @@ async function addVideo() {
   }
 
   const newVideo = { url, comment, date, order: 0 };
-
-  // Firestore に保存
   await addDoc(videosRef, newVideo);
 
   document.getElementById("url").value = "";
   document.getElementById("comment").value = "";
-  renderVideos();
-  highlightCalendar();
 }
 
-// 動画レンダリング
+// ===== Firestore から動画読み込み =====
+function loadVideos() {
+  const q = query(videosRef, orderBy("date", "asc"));
+  onSnapshot(q, (snapshot) => {
+    videos = {};
+    snapshot.docs.forEach((doc) => {
+      const data = doc.data();
+      if (!videos[data.date]) videos[data.date] = [];
+      videos[data.date].push({ ...data, id: doc.id });
+    });
+    renderVideos();
+    highlightCalendar();
+  });
+}
+
+// ===== 動画レンダリング =====
 function renderVideos() {
   const container = document.getElementById("videoList");
   container.innerHTML = "";
@@ -117,7 +121,6 @@ async function editVideo(date, index) {
   const newComment = prompt("コメントを編集:", videos[date][index].comment);
   if (newComment !== null) {
     videos[date][index].comment = newComment;
-    // Firestore で更新
     await updateDoc(doc(db, "videos", videos[date][index].id), { comment: newComment });
     renderVideos();
   }
@@ -126,7 +129,6 @@ async function editVideo(date, index) {
 // 削除
 async function deleteVideo(date, index) {
   if (confirm("削除しますか？")) {
-    // Firestore で削除
     await deleteDoc(doc(db, "videos", videos[date][index].id));
     videos[date].splice(index, 1);
     if (videos[date].length === 0) delete videos[date];
@@ -176,28 +178,13 @@ function highlightCalendar() {
   }
 }
 
-// 読み込み時
-function loadVideos() {
-  if (localStorage.getItem('loggedIn') !== 'true') {
-    document.getElementById("loginScreen").style.display = "block"; // ログインフォーム表示
-    return;
-  }
-
-  // Firestore から動画を読み込む
-  const q = query(videosRef, orderBy("date", "asc"));
-  onSnapshot(q, (snapshot) => {
-    videos = {};
-    snapshot.docs.forEach((doc) => {
-      const data = doc.data();
-      if (!videos[data.date]) videos[data.date] = [];
-      videos[data.date].push({ ...data, id: doc.id });
-    });
-    renderVideos();
-    highlightCalendar();
-  });
-}
-
-// ページ読み込み時にログインチェック
+// ページ読み込み時
 window.onload = function () {
-  loadVideos(); // ログイン確認後に動画データを読み込む
+  if (localStorage.getItem('loggedIn') === 'true') {
+    document.getElementById("loginScreen").style.display = "none";
+    document.getElementById("siteContent").style.display = "block";
+    loadVideos();
+  } else {
+    document.getElementById("loginScreen").style.display = "block";
+  }
 };
