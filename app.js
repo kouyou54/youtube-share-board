@@ -1,5 +1,5 @@
 /* Firebase設定 */
-const correctPassword = "54315";
+const correctPassword = "ryuseikai123";
 
 // ログイン処理
 function checkPassword() {
@@ -7,14 +7,12 @@ function checkPassword() {
   console.log("入力されたパスワード:", password); // 入力されたパスワードを確認
   
   if (password === correctPassword) {
-    console.log("ログイン成功");
     localStorage.setItem('loggedIn', 'true');  // ログイン状態を保存
     document.getElementById("loginScreen").style.display = "none";  // ログイン画面非表示
     document.getElementById("siteContent").style.display = "block";  // サイトコンテンツ表示
     loadVideos();  // 動画の読み込み
   } else {
-    console.log("パスワードが間違っています");
-    alert("パスワードが間違っています。");
+    alert("パスワードが間違っています。");  // 失敗した場合
   }
 }
 
