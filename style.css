@@ -1,22 +1,33 @@
+/* 背景グラデーション */
 body{
 margin:0;
-font-family:Arial;
-background:#f4f4f4;
+font-family:'Segoe UI', sans-serif;
+background: linear-gradient(135deg, #004d40, #00796b);
+color:#e8f5e9;
+transition: all 0.3s ease;
 }
 
+/* ヘッダー：高さ縮小 */
 header{
-background:#ff0000;
-color:white;
+background: linear-gradient(90deg, #1de9b6, #00bfa5);
+color:#fff;
 text-align:center;
-padding:20px;
+padding:20px 20px; /* 高さを縮小 */
+font-size:2.5rem;  
+font-weight:bold;
+text-shadow: 2px 2px 6px rgba(0,0,0,0.5);
+border-bottom-left-radius: 20px;
+border-bottom-right-radius: 20px;
 }
 
+/* コンテナ */
 .container{
-max-width:900px;
+max-width:1000px;
 margin:auto;
 padding:20px;
 }
 
+/* 投稿フォーム */
 .controls{
 display:flex;
 flex-wrap:wrap;
@@ -25,43 +36,71 @@ margin-bottom:20px;
 }
 
 input{
-padding:10px;
+padding:12px;
 font-size:16px;
 flex:1;
+border-radius:8px;
+border:none;
+outline:none;
+transition:0.3s;
+}
+
+input:focus{
+box-shadow:0 0 8px #26a69a;
 }
 
 button{
-padding:10px 20px;
-background:#ff0000;
-color:white;
+padding:12px 20px;
+background:#26a69a;
+color:#fff;
 border:none;
 cursor:pointer;
+border-radius:8px;
+font-weight:bold;
+transition:0.3s;
 }
 
-.dateList{
-display:flex;
-flex-wrap:wrap;
-gap:10px;
+button:hover{background:#00796b; transform: translateY(-2px);}
+
+/* カレンダー */
+#calendar{
+display:grid;
+grid-template-columns:repeat(7,1fr);
+gap:5px;
 margin-bottom:20px;
 }
 
-.dateItem{
-background:white;
-padding:10px 15px;
-border-radius:5px;
+.calendar-day{
+padding:12px;
+border-radius:8px;
+text-align:center;
 cursor:pointer;
-box-shadow:0 2px 5px rgba(0,0,0,0.2);
+background: rgba(255,255,255,0.05);
+transition: 0.2s;
+box-shadow:0 2px 4px rgba(0,0,0,0.3);
 }
 
+.calendar-day:hover{background:#26a69a; color:#000;}
+.calendar-day.active{background:#00bfa5; color:#000; font-weight:bold;}
+.calendar-day.hasVideo{border:2px solid #b2dfdb;}
+
+/* 動画カード */
 .videoCard{
-background:white;
+background: rgba(255,255,255,0.05);
 padding:15px;
 margin-bottom:15px;
-border-radius:5px;
-box-shadow:0 2px 8px rgba(0,0,0,0.2);
+border-radius:12px;
 display:flex;
-align-items:center;
+align-items:flex-start;
 justify-content:space-between;
+backdrop-filter: blur(6px);
+box-shadow:0 4px 12px rgba(0,0,0,0.4);
+transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.videoCard:hover{
+transform: translateY(-3px);
+box-shadow:0 6px 20px rgba(0,0,0,0.5);
 }
 
 .videoInfo{
@@ -69,23 +108,21 @@ flex:1;
 margin-right:10px;
 }
 
-.url{
-color:blue;
-word-break:break-all;
-}
+.url{color:#b2dfdb; word-break:break-all; font-weight:bold;}
 
-.delete{
-margin-left:10px;
-background:#333;
-color:white;
+.comment{color:#e0f2f1; margin-top:5px;}
+
+.delete, .edit, .save{
+margin-left:5px;
+background:#26a69a;
+color:#fff;
 border:none;
 padding:5px 10px;
 cursor:pointer;
+border-radius:6px;
+transition:0.3s;
 }
 
-.comment{
-margin-left:10px;
-font-size:14px;
-color:#333;
-word-break:break-all;
+.delete:hover, .edit:hover, .save:hover{
+background:#00796b; transform: translateY(-1px);
 }
