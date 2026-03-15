@@ -184,12 +184,12 @@ function highlightCalendar() {
 window.highlightCalendar = highlightCalendar;
 
 // ===== ページ読み込み時 =====
-window.onload = function () {
+document.addEventListener('DOMContentLoaded', () => {
   if (localStorage.getItem('loggedIn') === 'true') {
     document.getElementById("loginScreen").style.display = "none";
     document.getElementById("siteContent").style.display = "block";
     loadVideos();
   } else {
-    document.getElementById("loginScreen").style.display = "block";
+    document.getElementById("loginScreen").style.display = "flex"; // flexにして中央表示
   }
-};
+});
