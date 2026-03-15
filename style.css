@@ -7,13 +7,13 @@ color:#e8f5e9;
 transition: all 0.3s ease;
 }
 
-/* ヘッダー：高さ縮小 */
+/* ヘッダー */
 header{
-background: linear-gradient(90deg, #1de9b6, #00bfa5);
+background: linear-gradient(90deg, #00695c, #009688);
 color:#fff;
 text-align:center;
-padding:20px 20px; /* 高さを縮小 */
-font-size:2.5rem;  
+padding:20px 20px;
+font-size:2.5rem;
 font-weight:bold;
 text-shadow: 2px 2px 6px rgba(0,0,0,0.5);
 border-bottom-left-radius: 20px;
@@ -40,13 +40,16 @@ padding:12px;
 font-size:16px;
 flex:1;
 border-radius:8px;
-border:none;
+border:1px solid #004d40;
+background:#e0f2f1;
+color:#004d40;
 outline:none;
 transition:0.3s;
 }
 
 input:focus{
 box-shadow:0 0 8px #26a69a;
+border-color:#26a69a;
 }
 
 button{
@@ -75,18 +78,24 @@ padding:12px;
 border-radius:8px;
 text-align:center;
 cursor:pointer;
-background: rgba(255,255,255,0.05);
+background: rgba(255,255,255,0.08);
 transition: 0.2s;
 box-shadow:0 2px 4px rgba(0,0,0,0.3);
+color:#e0f2f1;
 }
 
-.calendar-day:hover{background:#26a69a; color:#000;}
-.calendar-day.active{background:#00bfa5; color:#000; font-weight:bold;}
-.calendar-day.hasVideo{border:2px solid #b2dfdb;}
+.calendar-day.hasVideo{border:2px solid #80cbc4;}
+.calendar-day.active{background:#26a69a; color:#004d40; font-weight:bold;}
+.calendar-day.today{background:#b2dfdb; color:#004d40; font-weight:bold;}
+
+.calendar-day:hover{
+background:#4db6ac;
+color:#004d40;
+}
 
 /* 動画カード */
 .videoCard{
-background: rgba(255,255,255,0.05);
+background: linear-gradient(135deg, rgba(0,77,64,0.5), rgba(0,150,136,0.5));
 padding:15px;
 margin-bottom:15px;
 border-radius:12px;
@@ -109,7 +118,6 @@ margin-right:10px;
 }
 
 .url{color:#b2dfdb; word-break:break-all; font-weight:bold;}
-
 .comment{color:#e0f2f1; margin-top:5px;}
 
 .delete, .edit, .save{
@@ -125,4 +133,10 @@ transition:0.3s;
 
 .delete:hover, .edit:hover, .save:hover{
 background:#00796b; transform: translateY(-1px);
+}
+
+/* レスポンシブ */
+@media(max-width:600px){
+.controls{flex-direction:column;}
+input, button{width:100%;}
 }
