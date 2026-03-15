@@ -12,7 +12,6 @@ window.onload = function(){
   }
 }
 
-/* Firebase設定 */
 const firebaseConfig = {
   apiKey: "AIzaSyBONAWg79Un6Tag0vPP0PB0UiqJLL6KvtM",
   authDomain: "shareboard-ee031.firebaseapp.com",
@@ -153,3 +152,13 @@ onSnapshot(q,(snapshot)=>{
   renderCalendar(snapshot);
   renderVideos(snapshot);
 });
+
+/*const firebaseConfig = {
+  apiKey: "AIzaSyBONAWg79Un6Tag0vPP0PB0UiqJLL6KvtM",
+  authDomain: "shareboard-ee031.firebaseapp.com",
+  projectId: "shareboard-ee031",
+  storageBucket: "shareboard-ee031.firebasestorage.app",
+  messagingSenderId: "972674645025",
+  appId: "1:972674645025:web:468e8a52a964e4a53e3760"
+};*/
+
