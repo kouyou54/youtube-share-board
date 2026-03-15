@@ -28,6 +28,7 @@ let filterMode = "all";
 let calendarYear = new Date().getFullYear();
 let calendarMonth = new Date().getMonth();
 let lastSnapshot = null;
+let sortable = null; // Sortable保持
 
 /* 投稿 */
 window.addVideo = async function(){
@@ -100,23 +101,25 @@ function renderVideos(snapshot){
     list.appendChild(div);
   });
 
-  /* Sortable: PC/スマホ対応 */
-  new Sortable(list,{
-    handle:".dragHandle",
-    animation:250,
-    easing:"cubic-bezier(0.25,1,0.5,1)",
-    delay:100,
-    delayOnTouchOnly:true,
-    touchStartThreshold:5,
-    ghostClass:"dragging",
-    chosenClass:"chosen",
-    onEnd(){
-      const items=list.querySelectorAll(".videoCard");
-      items.forEach((item,index)=>{
-        updateDoc(doc(db,"videos",item.dataset.id),{order:index});
-      });
-    }
-  });
+  /* Sortable 一度だけ初期化 */
+  if(!sortable){
+    sortable = new Sortable(list, {
+      handle: ".dragHandle",
+      animation: 200,
+      easing: "cubic-bezier(0.25, 1, 0.5, 1)",
+      delay: 100,
+      delayOnTouchOnly: true,
+      touchStartThreshold: 5,
+      ghostClass: "dragging",
+      chosenClass: "chosen",
+      onEnd(evt){
+        const items = list.querySelectorAll(".videoCard");
+        items.forEach((item,index)=>{
+          updateDoc(doc(db,"videos",item.dataset.id),{order:index});
+        });
+      }
+    });
+  }
 }
 
 /* 月移動 */
