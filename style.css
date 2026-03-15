@@ -1,167 +1,142 @@
-/* 背景 */
+/* 基本背景 */
 body{
   margin:0;
   font-family:'Segoe UI',sans-serif;
-  background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+  background: linear-gradient(135deg,#0f2027,#203a43,#2c5364);
   color:white;
+  line-height:1.5;
 }
 
 /* ヘッダー */
 header{
   text-align:center;
-  padding:20px;
+  padding:18px 10px;
 }
 header h1{
   display:flex;
   justify-content:center;
   align-items:center;
-  gap:12px;
-  font-size:2rem;
+  gap:10px;
+  font-size:1.8rem;
   font-weight:bold;
 }
 header i{
   color:#ff6b35;
-  font-size:1.8rem;
-  transition: transform 0.3s;
+  font-size:2rem;
 }
-header i:hover{ transform: rotate(-20deg) scale(1.2);}
-header .text{ transition: transform 0.3s; }
-header .text:hover{ transform: translateY(-2px); }
+header .text{
+  font-size:1.8rem;
+}
 
 /* コンテナ */
 .container{
-  max-width:1100px;
+  max-width:1000px;
   margin:auto;
-  padding:20px;
+  padding:15px;
 }
 
 /* 投稿フォーム */
 .controls{
   display:flex;
   flex-wrap:wrap;
-  gap:10px;
-  margin-bottom:25px;
+  gap:8px;
+  margin-bottom:20px;
 }
 .controls input{
   flex:1;
-  padding:12px;
-  border-radius:8px;
+  padding:10px;
+  border-radius:6px;
   border:none;
-  outline:none;
+  font-size:14px;
 }
 .controls button{
-  padding:12px 20px;
-  background:linear-gradient(45deg,#ff7a18,#ffb347);
-  border:none;
-  border-radius:8px;
+  padding:10px 18px;
+  background:#ff6b35;
   color:white;
-  font-weight:bold;
+  border:none;
+  border-radius:6px;
   cursor:pointer;
+  font-weight:bold;
+  font-size:14px;
 }
-.controls button:hover{ transform:scale(1.05); }
+.controls button:hover{ background:#ff5020; }
+
+/* ページタブ */
+.pageTabs{
+  display:flex;
+  gap:8px;
+  margin-bottom:15px;
+  flex-wrap:wrap;
+}
+.pageTabs button{
+  flex:1;
+  padding:8px 0;
+  border:none;
+  border-radius:6px;
+  background:#627d98;
+  color:white;
+  cursor:pointer;
+  font-size:14px;
+  font-weight:bold;
+}
+.pageTabs button.active{ background:#ff6b35; }
 
 /* カレンダー */
 #calendar{
   display:grid;
   grid-template-columns:repeat(7,1fr);
-  gap:6px;
+  gap:4px;
   margin-bottom:20px;
   overflow-x:auto;
-  padding-bottom:5px;
 }
 .calendar-day{
   background:rgba(255,255,255,0.1);
-  backdrop-filter:blur(6px);
-  padding:12px;
-  border-radius:8px;
+  padding:8px;
+  border-radius:6px;
   text-align:center;
   cursor:pointer;
-  min-width:40px;
+  font-size:13px;
 }
-.calendar-day:hover{ background:rgba(255,255,255,0.25);}
-.calendar-day.hasVideo{ border:2px solid #ff7a18; }
-.calendar-day.active{ background:#ff7a18; }
-
-/* フィルター */
-.filterButtons button{
-  background:#ff6b35;
-  border:none;
-  padding:8px 14px;
-  border-radius:6px;
-  color:white;
-  cursor:pointer;
-  transition: 0.2s;
-}
-.filterButtons button.active{
-  background:#ffb347;
-  transform: scale(1.05);
-}
-
-.viewButtons{
-  display:flex;
-  gap:10px;
-  margin-bottom:15px;
-}
-.viewButtons button{
-  background:#ff6b35;
-  border:none;
-  padding:6px 12px;
-  border-radius:6px;
-  color:white;
-  cursor:pointer;
-}
+.calendar-day.hasVideo{ border:2px solid #ff6b35; }
+.calendar-day.active{ background:#ffb347; color:#102a43; font-weight:bold; }
 
 /* 動画カード */
 .videoCard{
   display:flex;
+  flex-direction:row;
   align-items:flex-start;
   justify-content:space-between;
   background:rgba(255,255,255,0.08);
-  backdrop-filter:blur(8px);
-  padding:16px;
-  margin-bottom:14px;
-  border-radius:14px;
-  box-shadow:0 6px 15px rgba(0,0,0,0.4);
+  backdrop-filter:blur(6px);
+  padding:12px;
+  margin-bottom:12px;
+  border-radius:10px;
   flex-wrap:wrap;
+  font-size:14px;
 }
-.videoCard:hover{ transform:translateY(-3px); }
+.videoCard .videoInfo{ flex:1; min-width:100px; }
+.videoCard .url a{ color:#ffb347; word-break:break-word; font-weight:bold; }
+.videoCard .comment{ margin-top:5px; color:#e0e0e0; }
 
-.dragHandle{
-  cursor:grab;
-  font-size:26px;
-  margin-right:12px;
-  color:#ffb347;
-}
-.dragHandle:active{ cursor:grabbing; }
-.dragging{ opacity:0.6 !important; transform: scale(1.03);}
-.chosen{ transform: scale(1.05); box-shadow:0 15px 30px rgba(0,0,0,0.4); }
-
-.videoInfo{ flex:1; min-width:120px; }
-.url a{ color:#ffb347; font-weight:bold; word-break:break-all; }
-.comment{ margin-top:6px; color:#e0e0e0; }
-
-.buttons{ display:flex; gap:6px; flex-wrap:wrap;}
+/* ボタン */
+.buttons{ display:flex; gap:6px; flex-wrap:wrap; margin-top:6px;}
 .edit,.delete,.save{
   background:#34495e;
-  border:none;
   color:white;
-  padding:6px 10px;
+  border:none;
+  padding:4px 8px;
   border-radius:6px;
   cursor:pointer;
+  font-size:13px;
 }
 .delete{ background:#c0392b; }
 
-/* 予定表のバスケットボールアイコン */
-.videoCard ul li i.fas.fa-basketball-ball{
-  color:#ff6b35;
-  margin-right:8px;
-}
-
 /* スマホ対応 */
-@media(max-width:700px){
-  .controls{ flex-direction:column; }
-  .videoCard{ flex-direction:column; align-items:flex-start; }
-  .dragHandle{ font-size:30px; margin-bottom:8px; }
-  .buttons{ margin-top:10px; }
-  #calendar{ grid-template-columns:repeat(auto-fit,minmax(40px,1fr)); overflow-x:auto;}
+@media(max-width:600px){
+  header h1{ font-size:1.4rem; }
+  header i{ font-size:1.6rem; }
+  .controls input, .controls button{ font-size:13px; padding:8px; }
+  .videoCard{ font-size:13px; padding:10px; }
+  .buttons button{ font-size:12px; padding:4px 6px; }
+  .calendar-day{ font-size:11px; padding:6px; }
 }
