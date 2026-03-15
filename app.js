@@ -55,6 +55,8 @@ const videosRef=collection(db,"videos");
 
 let currentDate=null;
 
+let filterMode="all";
+
 let calendarYear=new Date().getFullYear();
 
 let calendarMonth=new Date().getMonth();
@@ -84,6 +86,36 @@ await addDoc(videosRef,{url,comment,date,order:0});
 document.getElementById("url").value="";
 
 document.getElementById("comment").value="";
+
+}
+
+/* フィルター */
+
+window.showAllVideos=function(){
+
+filterMode="all";
+
+renderVideos(lastSnapshot);
+
+document.getElementById("selectedDate").innerText="すべての動画";
+
+}
+
+window.showSelectedVideos=function(){
+
+if(!currentDate){
+
+alert("先にカレンダーの日付を選択してください");
+
+return;
+
+}
+
+filterMode="date";
+
+renderVideos(lastSnapshot);
+
+document.getElementById("selectedDate").innerText=currentDate+" の動画";
 
 }
 
@@ -128,7 +160,7 @@ snapshot.forEach(docSnap=>{
 
 const data=docSnap.data();
 
-if(currentDate && data.date!==currentDate) return;
+if(filterMode==="date" && data.date!==currentDate) return;
 
 const div=document.createElement("div");
 
@@ -139,9 +171,7 @@ div.dataset.id=docSnap.id;
 div.innerHTML=`
 
 <div class="dragHandle">
-
 <i class="fas fa-grip-lines"></i>
-
 </div>
 
 <div class="videoInfo">
@@ -180,19 +210,13 @@ list.appendChild(div);
 
 });
 
-/* Sortable */
+/* 並び替え */
 
 new Sortable(list,{
 
 handle:".dragHandle",
 
 animation:250,
-
-easing:"cubic-bezier(0.25, 1, 0.5, 1)",
-
-ghostClass:"dragging",
-
-chosenClass:"chosen",
 
 delay:120,
 
@@ -316,7 +340,11 @@ day.onclick=()=>{
 
 currentDate=dateStr;
 
+filterMode="date";
+
 renderVideos(snapshot);
+
+document.getElementById("selectedDate").innerText=dateStr+" の動画";
 
 };
 
