@@ -29,7 +29,7 @@ let filterMode = "all";
 let calendarYear = new Date().getFullYear();
 let calendarMonth = new Date().getMonth();
 let lastSnapshot = null;
-let sortable = null; // Sortable保持
+let sortable = null;
 
 /* 投稿 */
 window.addVideo = async function(){
@@ -47,8 +47,6 @@ window.showAllVideos = function(){
   filterMode="all";
   renderVideos(lastSnapshot);
   document.getElementById("selectedDate").innerText="すべての動画";
-
-  // ボタンのアクティブ切替
   document.querySelector(".filterButtons button:nth-child(1)").classList.add("active");
   document.querySelector(".filterButtons button:nth-child(2)").classList.remove("active");
 }
@@ -58,8 +56,6 @@ window.showSelectedVideos = function(){
   filterMode="date";
   renderVideos(lastSnapshot);
   document.getElementById("selectedDate").innerText=currentDate+" の動画";
-
-  // ボタンのアクティブ切替
   document.querySelector(".filterButtons button:nth-child(1)").classList.remove("active");
   document.querySelector(".filterButtons button:nth-child(2)").classList.add("active");
 }
@@ -110,7 +106,6 @@ function renderVideos(snapshot){
     list.appendChild(div);
   });
 
-  /* Sortable 一度だけ初期化 */
   if(!sortable){
     sortable = new Sortable(list, {
       handle: ".dragHandle",
@@ -149,7 +144,6 @@ function renderCalendar(snapshot){
   const calendar = document.getElementById("calendar");
   calendar.innerHTML="";
 
-  // タイトル（月移動ボタン付き）
   const title = document.createElement("div");
   title.style.gridColumn="span 7";
   title.style.textAlign="center";
@@ -161,7 +155,6 @@ function renderCalendar(snapshot){
   `;
   calendar.appendChild(title);
 
-  // 曜日ヘッダー
   const week = ["日","月","火","水","木","金","土"];
   week.forEach(d=>{
     const w = document.createElement("div");
@@ -173,11 +166,10 @@ function renderCalendar(snapshot){
 
   const firstDay = new Date(calendarYear,calendarMonth,1).getDay();
   const daysInMonth = new Date(calendarYear,calendarMonth+1,0).getDate();
+  const today = new Date();
 
-  // 空白セル
   for(let i=0;i<firstDay;i++) calendar.appendChild(document.createElement("div"));
 
-  // 日付セル
   for(let d=1; d<=daysInMonth; d++){
     const day = document.createElement("div");
     day.className="calendar-day";
@@ -185,21 +177,24 @@ function renderCalendar(snapshot){
     const dateStr = `${calendarYear}-${String(calendarMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
     day.innerText = d;
 
-    // 動画がある日をハイライト
+    if(calendarYear === today.getFullYear() &&
+       calendarMonth === today.getMonth() &&
+       d === today.getDate()){
+       day.classList.add("today");
+    }
+
     snapshot.forEach(doc=>{
       if(doc.data().date === dateStr){
         day.classList.add("hasVideo");
       }
     });
 
-    // 日付クリックで動画表示
     day.onclick = () => {
       currentDate = dateStr;
       filterMode = "date";
       renderVideos(snapshot);
       document.getElementById("selectedDate").innerText = dateStr + " の動画";
 
-      // ボタンを「選択日の動画」にアクティブ
       document.querySelector(".filterButtons button:nth-child(1)").classList.remove("active");
       document.querySelector(".filterButtons button:nth-child(2)").classList.add("active");
     };
