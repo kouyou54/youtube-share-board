@@ -25,7 +25,9 @@ const correctPassword = "54315";
 function checkPassword() {
   const password = document.getElementById("passwordInput").value.trim();
   if (password === correctPassword) {
+    // ログイン成功時、localStorage に情報を保存
     localStorage.setItem('loggedIn', 'true');
+    // ログイン画面を非表示にし、サイトコンテンツを表示
     document.getElementById("loginScreen").style.display = "none";
     document.getElementById("siteContent").style.display = "block";
     loadVideos();
