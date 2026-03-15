@@ -1,7 +1,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getFirestore, collection, addDoc, deleteDoc, doc, updateDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-/* ■ パスワード保護 */
+/* パスワード保護 */
 window.onload = function(){
   const password = "54315";
   const userPass = prompt("サイト閲覧にはパスワードが必要です:");
@@ -27,7 +27,7 @@ const db = getFirestore(app);
 const videosRef = collection(db,"videos");
 
 let currentDate = null;
-let sortableInitialized = false; 
+let sortableInitialized = false;
 
 /* 投稿 */
 window.addVideo = async function(){
