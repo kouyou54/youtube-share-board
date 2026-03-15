@@ -1,17 +1,18 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 
 import {
+
 getFirestore,
 collection,
 addDoc,
 getDocs,
 deleteDoc,
-doc,
-query,
-where
+doc
+
 }
 
 from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
 
 const firebaseConfig = {
   apiKey: "AIzaSyBONAWg79Un6Tag0vPP0PB0UiqJLL6KvtM",
@@ -22,18 +23,16 @@ const firebaseConfig = {
   appId: "1:972674645025:web:468e8a52a964e4a53e3760"
 };
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
 
+const app=initializeApp(firebaseConfig);
 
-const dateInput=document.getElementById("date");
-
-dateInput.addEventListener("change",loadVideos);
+const db=getFirestore(app);
 
 
 window.addVideo=async function(){
 
 const url=document.getElementById("url").value;
+const comment=document.getElementById("comment").value;
 const date=document.getElementById("date").value;
 
 if(!url||!date){
@@ -46,62 +45,69 @@ return;
 await addDoc(collection(db,"videos"),{
 
 url:url,
+comment:comment,
 date:date
 
 });
 
 document.getElementById("url").value="";
+document.getElementById("comment").value="";
 
-loadVideos();
-
-}
-
-
-function getVideoId(url){
-
-const reg=/v=([^&]+)/;
-const match=url.match(reg);
-
-if(match){
-
-return match[1];
-
-}
-
-return "";
+loadDates();
 
 }
 
 
-async function loadVideos(){
+async function loadDates(){
 
-const date=document.getElementById("date").value;
+const snapshot=await getDocs(collection(db,"videos"));
+
+const dates=new Set();
+
+snapshot.forEach(doc=>{
+
+dates.add(doc.data().date);
+
+});
+
+const list=document.getElementById("dateList");
+
+list.innerHTML="";
+
+dates.forEach(date=>{
+
+const div=document.createElement("div");
+
+div.className="dateItem";
+
+div.innerText=date;
+
+div.onclick=()=>loadVideos(date);
+
+list.appendChild(div);
+
+});
+
+}
+
+
+async function loadVideos(date){
 
 document.getElementById("selectedDate").innerText="📅 "+date+" の動画";
 
-const q=query(
-
-collection(db,"videos"),
-where("date","==",date)
-
-);
-
-const snapshot=await getDocs(q);
+const snapshot=await getDocs(collection(db,"videos"));
 
 const list=document.getElementById("videoList");
 
 list.innerHTML="";
 
-snapshot.forEach((docSnap)=>{
+snapshot.forEach(docSnap=>{
 
 const data=docSnap.data();
+
+if(data.date!==date) return;
+
 const id=docSnap.id;
-
-const videoId=getVideoId(data.url);
-
-const thumbnail=
-
-"https://img.youtube.com/vi/"+videoId+"/hqdefault.jpg";
 
 const div=document.createElement("div");
 
@@ -109,25 +115,27 @@ div.className="videoCard";
 
 div.innerHTML=`
 
-<img class="thumbnail" src="${thumbnail}">
-
-<div class="videoBody">
+<div class="url">
 
 <a href="${data.url}" target="_blank">
 
-YouTubeで見る
+${data.url}
 
 </a>
 
-<br>
+</div>
+
+<p>
+
+${data.comment||""}
+
+</p>
 
 <button class="delete" onclick="deleteVideo('${id}')">
 
 削除
 
 </button>
-
-</div>
 
 `;
 
@@ -142,6 +150,9 @@ window.deleteVideo=async function(id){
 
 await deleteDoc(doc(db,"videos",id));
 
-loadVideos();
+loadDates();
 
 }
+
+
+loadDates();
