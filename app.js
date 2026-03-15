@@ -3,7 +3,7 @@ import { getFirestore, collection, addDoc, deleteDoc, doc, updateDoc, onSnapshot
 
 /* パスワード保護 */
 window.onload = function(){
-  const password = "ryuseikai123";
+  const password = "54315";
   const userPass = prompt("サイト閲覧にはパスワードが必要です:");
   if(userPass !== password){
     alert("パスワードが間違っています。サイトを閉じます。");
