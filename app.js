@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getFirestore, collection, addDoc, deleteDoc, doc, updateDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getFirestore, collection, addDoc, deleteDoc, doc, updateDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 /* ■ パスワード保護 */
 window.onload = function(){
@@ -27,110 +27,134 @@ const db = getFirestore(app);
 const videosRef = collection(db,"videos");
 
 let currentDate = null;
+let sortableInitialized = false; // ★ SortableJS初期化用
 
 /* 投稿 */
 window.addVideo = async function(){
-const url = document.getElementById("url").value;
-const comment = document.getElementById("comment").value;
-const date = document.getElementById("date").value;
-if(!url || !date){alert("日付とURLを入力してください"); return;}
-await addDoc(videosRef,{url, comment, date});
-document.getElementById("url").value="";
-document.getElementById("comment").value="";
+  const url = document.getElementById("url").value;
+  const comment = document.getElementById("comment").value;
+  const date = document.getElementById("date").value;
+  if(!url || !date){alert("日付とURLを入力してください"); return;}
+  // Firestoreにorderを初期値0で保存
+  await addDoc(videosRef,{url, comment, date, order: 0});
+  document.getElementById("url").value="";
+  document.getElementById("comment").value="";
 }
 
 /* コメント編集 */
 window.editComment = function(id){
-const commentDiv = document.getElementById("comment-"+id);
-const text = commentDiv.innerText;
-commentDiv.innerHTML = `<input type="text" id="editInput-${id}" value="${text}">
-<button class="save" onclick="saveComment('${id}')">保存</button>`;
+  const commentDiv = document.getElementById("comment-"+id);
+  const text = commentDiv.innerText;
+  commentDiv.innerHTML = `<input type="text" id="editInput-${id}" value="${text}">
+  <button class="save" onclick="saveComment('${id}')">保存</button>`;
 }
 
 window.saveComment = async function(id){
-const input = document.getElementById("editInput-"+id);
-await updateDoc(doc(db,"videos",id), {comment: input.value});
+  const input = document.getElementById("editInput-"+id);
+  await updateDoc(doc(db,"videos",id), {comment: input.value});
 }
 
 /* 削除 */
 window.deleteVideo = async function(id){
-await deleteDoc(doc(db,"videos",id));
+  await deleteDoc(doc(db,"videos",id));
 }
 
-/* カレンダー表示 */
-function renderCalendar(snapshot){
-const calendarDiv = document.getElementById("calendar");
-calendarDiv.innerHTML="";
-
-const today = new Date();
-const year = today.getFullYear();
-const month = today.getMonth();
-const daysInMonth = new Date(year, month+1, 0).getDate();
-
-for(let d=1; d<=daysInMonth; d++){
-const dayDiv = document.createElement("div");
-dayDiv.className="calendar-day";
-const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-dayDiv.innerText=d;
-
-// 今日の日付
-if(today.getDate()===d){ dayDiv.classList.add("today"); }
-
-// 動画がある日を強調
-snapshot.forEach(doc=>{
-if(doc.data().date===dateStr){ dayDiv.classList.add("hasVideo"); }
-});
-
-dayDiv.onclick=()=>{
-currentDate=dateStr;
-renderVideos(snapshot);
-highlightCalendarDay(dateStr);
-};
-calendarDiv.appendChild(dayDiv);
-}
-}
-
-/* カレンダー選択日強調 */
-function highlightCalendarDay(dateStr){
-const days = document.querySelectorAll(".calendar-day");
-days.forEach(day=>{
-if(day.innerText==parseInt(dateStr.split('-')[2])){day.classList.add("active");}
-else{day.classList.remove("active");}
-});
+/* Firestore順序更新 */
+async function updateOrderInFirestore(id, order){
+  await updateDoc(doc(db, "videos", id), { order });
 }
 
 /* 動画一覧表示 */
 function renderVideos(snapshot){
-const list=document.getElementById("videoList");
-list.innerHTML="";
-snapshot.forEach(docSnap=>{
-const data=docSnap.data();
-const id=docSnap.id;
-if(currentDate && data.date!==currentDate) return;
+  const list = document.getElementById("videoList");
+  list.innerHTML = "";
 
-const div=document.createElement("div");
-div.className="videoCard";
+  const videos = snapshot.docs.map(docSnap => ({id: docSnap.id, ...docSnap.data()}));
+  // 並び順でソート
+  videos.sort((a,b) => (a.order||0) - (b.order||0));
 
-div.innerHTML=`
-<div class="videoInfo">
-<strong>📅 ${data.date}</strong>
-<div class="url">${data.url}</div>
-<div class="comment" id="comment-${id}">${data.comment || ""}</div>
-</div>
-<div>
-<button class="edit" onclick="editComment('${id}')">編集</button>
-<button class="delete" onclick="deleteVideo('${id}')">削除</button>
-</div>
-`;
+  videos.forEach(data => {
+    if(currentDate && data.date!==currentDate) return;
 
-list.appendChild(div);
-});
+    const div = document.createElement("div");
+    div.className = "videoCard";
+    div.dataset.id = data.id;
+
+    div.innerHTML = `
+      <div class="videoInfo">
+        <strong>📅 ${data.date}</strong>
+        <div class="url">${data.url}</div>
+        <div class="comment" id="comment-${data.id}">${data.comment || ""}</div>
+      </div>
+      <div>
+        <button class="edit" onclick="editComment('${data.id}')">編集</button>
+        <button class="delete" onclick="deleteVideo('${data.id}')">削除</button>
+      </div>
+    `;
+
+    list.appendChild(div);
+  });
+
+  // ★ SortableJS初回のみ初期化
+  if(!sortableInitialized){
+    new Sortable(list, {
+      animation:150,
+      onEnd(evt){
+        const items = list.querySelectorAll(".videoCard");
+        items.forEach((item,index)=>{
+          updateOrderInFirestore(item.dataset.id,index);
+        });
+      }
+    });
+    sortableInitialized = true;
+  }
+}
+
+/* カレンダー表示 */
+function renderCalendar(snapshot){
+  const calendarDiv = document.getElementById("calendar");
+  calendarDiv.innerHTML="";
+
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = today.getMonth();
+  const daysInMonth = new Date(year, month+1, 0).getDate();
+
+  for(let d=1; d<=daysInMonth; d++){
+    const dayDiv = document.createElement("div");
+    dayDiv.className="calendar-day";
+    const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    dayDiv.innerText=d;
+
+    if(today.getDate()===d){ dayDiv.classList.add("today"); }
+
+    snapshot.forEach(doc=>{
+      if(doc.data().date===dateStr){ dayDiv.classList.add("hasVideo"); }
+    });
+
+    dayDiv.onclick=()=>{
+      currentDate=dateStr;
+      renderVideos(snapshot);
+      highlightCalendarDay(dateStr);
+    };
+    calendarDiv.appendChild(dayDiv);
+  }
+}
+
+function highlightCalendarDay(dateStr){
+  const days = document.querySelectorAll(".calendar-day");
+  days.forEach(day=>{
+    if(day.innerText==parseInt(dateStr.split('-')[2])) day.classList.add("active");
+    else day.classList.remove("active");
+  });
+  document.getElementById("selectedDate").innerText = currentDate ? `${currentDate} の動画` : "すべての動画";
 }
 
 /* Firestoreリアルタイム同期 */
-onSnapshot(videosRef,(snapshot)=>{
-renderCalendar(snapshot);
-renderVideos(snapshot);
+const q = query(videosRef, orderBy("order","asc"));
+onSnapshot(q,(snapshot)=>{
+  renderCalendar(snapshot);
+  renderVideos(snapshot);
 });
 
 /*const firebaseConfig = {
