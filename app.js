@@ -24,18 +24,17 @@ const firebaseConfig = {
 };
 
 
-const app=initializeApp(firebaseConfig);
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
-const db=getFirestore(app);
 
+window.addVideo = async function(){
 
-window.addVideo=async function(){
+const url = document.getElementById("url").value;
+const comment = document.getElementById("comment").value;
+const date = document.getElementById("date").value;
 
-const url=document.getElementById("url").value;
-const comment=document.getElementById("comment").value;
-const date=document.getElementById("date").value;
-
-if(!url||!date){
+if(!url || !date){
 
 alert("日付とURLを入力してください");
 return;
@@ -60,9 +59,9 @@ loadDates();
 
 async function loadDates(){
 
-const snapshot=await getDocs(collection(db,"videos"));
+const snapshot = await getDocs(collection(db,"videos"));
 
-const dates=new Set();
+const dates = new Set();
 
 snapshot.forEach(doc=>{
 
@@ -70,7 +69,7 @@ dates.add(doc.data().date);
 
 });
 
-const list=document.getElementById("dateList");
+const list = document.getElementById("dateList");
 
 list.innerHTML="";
 
@@ -95,7 +94,7 @@ async function loadVideos(date){
 
 document.getElementById("selectedDate").innerText="📅 "+date+" の動画";
 
-const snapshot=await getDocs(collection(db,"videos"));
+const snapshot = await getDocs(collection(db,"videos"));
 
 const list=document.getElementById("videoList");
 
@@ -125,11 +124,7 @@ ${data.url}
 
 </div>
 
-<p>
-
-${data.comment||""}
-
-</p>
+<p>${data.comment || ""}</p>
 
 <button class="delete" onclick="deleteVideo('${id}')">
 
@@ -146,7 +141,7 @@ list.appendChild(div);
 }
 
 
-window.deleteVideo=async function(id){
+window.deleteVideo = async function(id){
 
 await deleteDoc(doc(db,"videos",id));
 
