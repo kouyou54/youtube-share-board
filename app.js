@@ -24,21 +24,20 @@ const correctPassword = "54315";
 // ===== ログイン関数 =====
 function checkPassword() {
   const password = document.getElementById("passwordInput").value.trim();
-  console.log("入力されたパスワード: ", password); // パスワードが正しく取得されているか確認
+  console.log("入力されたパスワード:", password); // 入力されたパスワードを確認
   
   if (password === correctPassword) {
-    // ログイン成功
     console.log("ログイン成功");
-    localStorage.setItem('loggedIn', 'true');
-    document.getElementById("loginScreen").style.display = "none";
-    document.getElementById("siteContent").style.display = "block";
-    loadVideos();
+    localStorage.setItem('loggedIn', 'true');  // ログイン状態を保存
+    document.getElementById("loginScreen").style.display = "none";  // ログイン画面非表示
+    document.getElementById("siteContent").style.display = "block";  // サイトコンテンツ表示
+    loadVideos();  // 動画の読み込み
   } else {
-    // パスワード失敗
     console.log("パスワードが間違っています");
     alert("パスワードが間違っています。");
   }
 }
+
 window.checkPassword = checkPassword;
 
 // ===== 動画追加 =====
@@ -58,6 +57,7 @@ async function addVideo() {
   document.getElementById("url").value = "";
   document.getElementById("comment").value = "";
 }
+
 window.addVideo = addVideo;
 
 // ===== Firestoreから動画読み込み =====
@@ -125,6 +125,7 @@ function renderVideos() {
     }
   });
 }
+
 window.renderVideos = renderVideos;
 
 // ===== 編集 =====
@@ -136,6 +137,7 @@ async function editVideo(date, index) {
     renderVideos();
   }
 }
+
 window.editVideo = editVideo;
 
 // ===== 削除 =====
@@ -148,6 +150,7 @@ async function deleteVideo(date, index) {
     highlightCalendar();
   }
 }
+
 window.deleteVideo = deleteVideo;
 
 // ===== カレンダー表示 =====
@@ -187,11 +190,13 @@ function highlightCalendar() {
     calendar.appendChild(dayDiv);
   }
 }
+
 window.highlightCalendar = highlightCalendar;
 
 // ===== ページ読み込み時 =====
 document.addEventListener('DOMContentLoaded', () => {
   console.log("ページが読み込まれました");
+
   if (localStorage.getItem('loggedIn') === 'true') {
     console.log("ログイン状態: ログイン済み");
     document.getElementById("loginScreen").style.display = "none";
