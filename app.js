@@ -19,7 +19,7 @@ const videosRef = collection(db, "videos");
 let selectedDate = null;
 
 // ===== 1段階目: パスワード確認 =====
-const correctPassword = "ryuseikai123";
+const correctPassword = "54315";
 
 function checkPassword() {
   const password = document.getElementById("passwordInput").value.trim();
