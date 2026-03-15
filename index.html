@@ -1,25 +1,27 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>流星会</title>
-<link rel="stylesheet" href="style.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>流星会</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- Font Awesome CDN追加 -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
 </head>
 <body>
 
 <header>
-<h1>流星会</h1>
+  <h1>流星会 <i class="fas fa-basketball-ball"></i></h1> <!-- バスケットボールアイコン追加 -->
 </header>
 
 <div class="container">
 
 <div class="controls">
-<input type="date" id="date">
-<input type="text" id="url" placeholder="YouTube URL">
-<input type="text" id="comment" placeholder="コメント">
-<button onclick="addVideo()">投稿</button>
+  <input type="date" id="date">
+  <input type="text" id="url" placeholder="YouTube URL">
+  <input type="text" id="comment" placeholder="コメント">
+  <button onclick="addVideo()">投稿</button>
 </div>
 
 <h2>📅 カレンダー</h2>
