@@ -1,79 +1,147 @@
-// Firebase初期化
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+
+import {
+getFirestore,
+collection,
+addDoc,
+getDocs,
+deleteDoc,
+doc,
+query,
+where
+}
+
+from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
+  apiKey: "AIzaSyBONAWg79Un6Tag0vPP0PB0UiqJLL6KvtM",
+  authDomain: "shareboard-ee031.firebaseapp.com",
+  projectId: "shareboard-ee031",
+  storageBucket: "shareboard-ee031.firebasestorage.app",
+  messagingSenderId: "972674645025",
+  appId: "1:972674645025:web:468e8a52a964e4a53e3760"
 };
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
-const auth = firebase.auth();
 
-let currentUser = null;
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
-// FullCalendar 初期化
-const calendarEl = document.getElementById('calendar');
-const calendar = new FullCalendar.Calendar(calendarEl, {
-  initialView: 'dayGridMonth',
-  events: [],
-  eventClick: function(info) {
-    if(info.event.extendedProps.user === currentUser) {
-      if(confirm('この動画を削除しますか？')) {
-        db.collection('videos').doc(info.event.id).delete();
-      }
-    } else {
-      alert('他のユーザーの投稿は削除できません');
-    }
-  },
-});
-calendar.render();
 
-// ログイン
-const loginBtn = document.getElementById("loginBtn");
-const userInfo = document.getElementById("userInfo");
+const dateInput=document.getElementById("date");
 
-loginBtn.addEventListener("click", () => {
-  const provider = new firebase.auth.GoogleAuthProvider();
-  auth.signInWithPopup(provider);
+dateInput.addEventListener("change",loadVideos);
+
+
+window.addVideo=async function(){
+
+const url=document.getElementById("url").value;
+const date=document.getElementById("date").value;
+
+if(!url||!date){
+
+alert("日付とURLを入力してください");
+return;
+
+}
+
+await addDoc(collection(db,"videos"),{
+
+url:url,
+date:date
+
 });
 
-// ユーザー状態の監視
-auth.onAuthStateChanged(user => {
-  if(user) {
-    currentUser = user.displayName;
-    userInfo.textContent = `ログイン中: ${currentUser}`;
-    loginBtn.style.display = 'none';
-  } else {
-    currentUser = null;
-    userInfo.textContent = '';
-    loginBtn.style.display = 'block';
-  }
+document.getElementById("url").value="";
+
+loadVideos();
+
+}
+
+
+function getVideoId(url){
+
+const reg=/v=([^&]+)/;
+const match=url.match(reg);
+
+if(match){
+
+return match[1];
+
+}
+
+return "";
+
+}
+
+
+async function loadVideos(){
+
+const date=document.getElementById("date").value;
+
+document.getElementById("selectedDate").innerText="📅 "+date+" の動画";
+
+const q=query(
+
+collection(db,"videos"),
+where("date","==",date)
+
+);
+
+const snapshot=await getDocs(q);
+
+const list=document.getElementById("videoList");
+
+list.innerHTML="";
+
+snapshot.forEach((docSnap)=>{
+
+const data=docSnap.data();
+const id=docSnap.id;
+
+const videoId=getVideoId(data.url);
+
+const thumbnail=
+
+"https://img.youtube.com/vi/"+videoId+"/hqdefault.jpg";
+
+const div=document.createElement("div");
+
+div.className="videoCard";
+
+div.innerHTML=`
+
+<img class="thumbnail" src="${thumbnail}">
+
+<div class="videoBody">
+
+<a href="${data.url}" target="_blank">
+
+YouTubeで見る
+
+</a>
+
+<br>
+
+<button class="delete" onclick="deleteVideo('${id}')">
+
+削除
+
+</button>
+
+</div>
+
+`;
+
+list.appendChild(div);
+
 });
 
-// 動画追加
-const addForm = document.getElementById("addForm");
-addForm.addEventListener("submit", async (e) => {
-  e.preventDefault();
-  if(!currentUser) return alert('ログインしてください');
-  
-  const date = document.getElementById("videoDate").value;
-  const title = document.getElementById("videoTitle").value;
-  const url = document.getElementById("videoUrl").value;
+}
 
-  const docRef = await db.collection("videos").add({ date, title, url, user: currentUser });
-  addForm.reset();
-});
 
-// Firestoreのリアルタイム監視
-db.collection("videos").onSnapshot(snapshot => {
-  calendar.getEvents().forEach(event => event.remove()); // 既存イベント削除
-  snapshot.forEach(doc => {
-    const data = doc.data();
-    calendar.addEvent({
-      id: doc.id,
-      title: data.title,
-      start: data.date,
-      url: data.url,
-      extendedProps: { user: data.user }
-    });
-  });
-});
+window.deleteVideo=async function(id){
+
+await deleteDoc(doc(db,"videos",id));
+
+loadVideos();
+
+}
