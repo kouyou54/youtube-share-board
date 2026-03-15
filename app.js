@@ -1,5 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getFirestore, collection, addDoc, deleteDoc, doc, updateDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import Sortable from "https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js";
 
 // Firebase設定
 const firebaseConfig = {
@@ -11,7 +12,7 @@ const firebaseConfig = {
   appId: "1:972674645025:web:468e8a52a964e4a53e3760"
 };
 
-// Firebase 初期化
+// Firebase初期化
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const videosRef = collection(db, "videos");
@@ -20,18 +21,19 @@ let selectedDate = null;
 let videos = {};
 const correctPassword = "54315";
 
-// ===== ログイン確認 =====
+// ===== ログイン関数 =====
 function checkPassword() {
   const password = document.getElementById("passwordInput").value.trim();
   if (password === correctPassword) {
-    localStorage.setItem('loggedIn', 'true');  // ログイン状態保存
+    localStorage.setItem('loggedIn', 'true');
     document.getElementById("loginScreen").style.display = "none";
     document.getElementById("siteContent").style.display = "block";
-    loadVideos();  // 動画ロード
+    loadVideos();
   } else {
     alert("パスワードが間違っています。");
   }
 }
+window.checkPassword = checkPassword;
 
 // ===== 動画追加 =====
 async function addVideo() {
@@ -50,16 +52,17 @@ async function addVideo() {
   document.getElementById("url").value = "";
   document.getElementById("comment").value = "";
 }
+window.addVideo = addVideo;
 
-// ===== Firestore から動画読み込み =====
+// ===== Firestoreから動画読み込み =====
 function loadVideos() {
   const q = query(videosRef, orderBy("date", "asc"));
   onSnapshot(q, (snapshot) => {
     videos = {};
-    snapshot.docs.forEach((doc) => {
-      const data = doc.data();
+    snapshot.docs.forEach((docItem) => {
+      const data = docItem.data();
       if (!videos[data.date]) videos[data.date] = [];
-      videos[data.date].push({ ...data, id: doc.id });
+      videos[data.date].push({ ...data, id: docItem.id });
     });
     renderVideos();
     highlightCalendar();
@@ -70,7 +73,8 @@ function loadVideos() {
 function renderVideos() {
   const container = document.getElementById("videoList");
   container.innerHTML = "";
-  let datesToShow = selectedDate ? [selectedDate] : Object.keys(videos).sort();
+
+  const datesToShow = selectedDate ? [selectedDate] : Object.keys(videos).sort();
 
   datesToShow.forEach((date) => {
     if (!videos[date]) return;
@@ -104,7 +108,7 @@ function renderVideos() {
     });
   });
 
-  // ドラッグ順入れ替え
+  // ドラッグで順番入れ替え
   new Sortable(container, {
     animation: 150,
     onEnd: function (evt) {
@@ -115,8 +119,9 @@ function renderVideos() {
     }
   });
 }
+window.renderVideos = renderVideos;
 
-// 編集
+// ===== 編集 =====
 async function editVideo(date, index) {
   const newComment = prompt("コメントを編集:", videos[date][index].comment);
   if (newComment !== null) {
@@ -125,8 +130,9 @@ async function editVideo(date, index) {
     renderVideos();
   }
 }
+window.editVideo = editVideo;
 
-// 削除
+// ===== 削除 =====
 async function deleteVideo(date, index) {
   if (confirm("削除しますか？")) {
     await deleteDoc(doc(db, "videos", videos[date][index].id));
@@ -136,6 +142,7 @@ async function deleteVideo(date, index) {
     highlightCalendar();
   }
 }
+window.deleteVideo = deleteVideo;
 
 // ===== カレンダー表示 =====
 function highlightCalendar() {
@@ -156,15 +163,12 @@ function highlightCalendar() {
   for (let d = 1; d <= daysInMonth; d++) {
     const dayDiv = document.createElement("div");
     dayDiv.className = "calendar-day";
-    const dateStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+    const dateStr = `${year}-${String(month + 1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
     dayDiv.textContent = d;
 
-    if (videos[dateStr] && videos[dateStr].length > 0) {
-      dayDiv.classList.add("hasVideo");
-    }
-
+    if (videos[dateStr] && videos[dateStr].length > 0) dayDiv.classList.add("hasVideo");
     if (dateStr === selectedDate) dayDiv.classList.add("active");
-    const todayStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+    const todayStr = `${year}-${String(month+1).padStart(2,"0")}-${String(today.getDate()).padStart(2,"0")}`;
     if (dateStr === todayStr) dayDiv.classList.add("today");
 
     dayDiv.onclick = () => {
@@ -177,8 +181,9 @@ function highlightCalendar() {
     calendar.appendChild(dayDiv);
   }
 }
+window.highlightCalendar = highlightCalendar;
 
-// ページ読み込み時
+// ===== ページ読み込み時 =====
 window.onload = function () {
   if (localStorage.getItem('loggedIn') === 'true') {
     document.getElementById("loginScreen").style.display = "none";
