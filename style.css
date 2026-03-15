@@ -1,9 +1,63 @@
-/* 背景 */
+/* ログインフォーム */
+.login-screen {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 9999;
+}
+
+.login-box {
+  background: #ffffff;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  text-align: center;
+  max-width: 400px;
+  width: 100%;
+}
+
+.login-box h2 {
+  margin-bottom: 20px;
+  font-size: 1.5rem;
+  color: #102a43;
+}
+
+.login-box input {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  border-radius: 8px;
+  border: 1px solid #bcccdc;
+  font-size: 16px;
+}
+
+.login-box button {
+  width: 100%;
+  padding: 12px;
+  background-color: #ff6b35;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.login-box button:hover {
+  background-color: #ff5020;
+}
+
+/* 既存スタイル（サイト本体） */
 body {
-  margin:0;
-  font-family:'Segoe UI', sans-serif;
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
   background: linear-gradient(135deg, #dfe6ed, #f0f4f8);
-  color:#102a43;
+  color: #102a43;
 }
 
 /* ヘッダー */
@@ -14,19 +68,19 @@ header {
   padding: 15px 20px;
   border-bottom-left-radius: 15px;
   border-bottom-right-radius: 15px;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
 }
 header h1 {
   font-size: 2rem;
   font-weight: bold;
-  margin:0;
+  margin: 0;
 }
 
 /* バスケットボールアイコン */
 header i {
   font-size: 1.5rem;
   margin-left: 10px;
-  color: #ff6b35;  /* アイコンをオレンジ色に変更 */
+  color: #ff6b35; /* アイコンをオレンジ色に変更 */
 }
 
 /* コンテナ */
@@ -46,7 +100,7 @@ header i {
 input {
   padding: 12px;
   font-size: 16px;
-  flex:1;
+  flex: 1;
   border-radius: 8px;
   border: 1px solid #bcccdc;
   background: #ffffff;
@@ -85,10 +139,10 @@ button:hover {
   border-radius: 8px;
   text-align: center;
   cursor: pointer;
-  background: rgba(255,255,255,0.8);
+  background: rgba(255, 255, 255, 0.8);
   transition: 0.2s;
   color: #102a43;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 .calendar-day.hasVideo { border: 2px solid #ff6b35; } 
 .calendar-day.active { background: #ffb86b; color: #102a43; font-weight: bold; }
@@ -104,29 +158,29 @@ button:hover {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   transition: transform 0.2s, box-shadow 0.2s;
 }
 .videoCard:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
 }
-.videoInfo { flex:1; margin-right:10px; }
+.videoInfo { flex: 1; margin-right: 10px; }
 .url { color: #ff6b35; word-break: break-all; font-weight: bold; }
 .comment { color: #102a43; margin-top: 5px; }
 
 .delete, .edit, .save {
-  margin-left:5px;
+  margin-left: 5px;
   background: #627d98;
   color: #fff;
-  border:none;
-  padding:5px 10px;
-  cursor:pointer;
-  border-radius:6px;
-  transition:0.3s;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: 0.3s;
 }
 .delete:hover, .edit:hover, .save:hover {
-  background:#334e68;
+  background: #334e68;
   transform: translateY(-1px);
 }
 
