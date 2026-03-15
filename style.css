@@ -12,11 +12,21 @@ header {
   color: #ffffff;
   text-align: center;
   padding: 15px 20px;
-  font-size: 2rem;
-  font-weight: bold;
   border-bottom-left-radius: 15px;
   border-bottom-right-radius: 15px;
   box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+}
+header h1 {
+  font-size: 2rem;
+  font-weight: bold;
+  margin:0;
+}
+
+/* バスケットボールアイコン */
+header i {
+  font-size: 1.5rem;
+  margin-left: 10px;
+  color: #ff6b35;  /* アイコンをオレンジ色に変更 */
 }
 
 /* コンテナ */
@@ -120,8 +130,21 @@ button:hover {
   transform: translateY(-1px);
 }
 
-/* レスポンシブ */
+/* レスポンシブ対応 */
 @media(max-width:600px) {
-  .controls { flex-direction: column; }
-  input, button { width: 100%; }
+  /* ヘッダー文字サイズをスマホ向けに縮小 */
+  header h1 {
+    font-size: 1.5rem;
+    padding: 10px 15px;
+  }
+
+  /* 投稿フォーム縦並び、幅100% */
+  .controls { 
+    flex-direction: column; 
+    gap: 8px;
+  }
+  .controls input, .controls button { 
+    width: 100%; 
+    box-sizing: border-box;
+  }
 }
