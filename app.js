@@ -116,18 +116,6 @@ await updateDoc(doc(db,"videos",id),{comment:value});
 
 }
 
-/* YouTube ID */
-
-function getYoutubeID(url){
-
-const regExp=/(?:youtube\.com.*(?:\?|&)v=|youtu\.be\/)([^&]+)/;
-
-const match=url.match(regExp);
-
-return match?match[1]:null;
-
-}
-
 /* 動画表示 */
 
 function renderVideos(snapshot){
@@ -142,8 +130,6 @@ const data=docSnap.data();
 
 if(currentDate&&data.date!==currentDate)return;
 
-const videoId=getYoutubeID(data.url);
-
 const div=document.createElement("div");
 
 div.className="videoCard";
@@ -154,11 +140,15 @@ div.innerHTML=`
 
 <strong>📅 ${data.date}</strong>
 
+<div class="url">
+
 <a href="${data.url}" target="_blank">
 
-<img class="thumb" src="https://img.youtube.com/vi/${videoId}/0.jpg">
+${data.url}
 
 </a>
+
+</div>
 
 <div class="comment" id="comment-${docSnap.id}">
 
@@ -245,8 +235,6 @@ week.forEach(d=>{
 const w=document.createElement("div");
 
 w.innerText=d;
-
-w.style.fontWeight="bold";
 
 w.style.textAlign="center";
 
