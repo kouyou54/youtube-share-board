@@ -32,8 +32,13 @@
   <div id="calendar"></div>
 
   <div class="filterButtons">
-    <button onclick="showAllVideos()">すべての動画</button>
-    <button onclick="showSelectedVideos()">選択日の動画</button>
+    <button id="allBtn" onclick="showAllVideos()">すべての動画</button>
+    <button id="dateBtn" onclick="showSelectedVideos()">選択日の動画</button>
+  </div>
+
+  <div class="viewButtons">
+    <button onclick="showVideoList()">動画リスト</button>
+    <button onclick="showSchedule()">予定表</button>
   </div>
 
   <h2 id="selectedDate">すべての動画</h2>
